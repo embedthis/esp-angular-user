@@ -5,5 +5,9 @@
     "dependencies": {
         "esp-angular-mvc": "*"
     },
-    "export": ["client/**", "controllers/*.c", "db/**"],
+    "export": [
+        "client/**", 
+        "controllers/*.c", 
+        "db/**"
+    ],
 }
