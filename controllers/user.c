@@ -3,6 +3,10 @@
  */
 #include "esp.h"
 
+static void checkAuthenticated() {
+    sendResult(httpIsAuthenticated(getConn()));
+}
+
 static void createUser() { 
     if (canUser("edit", 1)) {
         setParam("password", mprMakePassword(param("password"), 0, 0));
@@ -47,7 +51,7 @@ static void updateUser() {
     }
 }
 
-static void forgot() {
+static void forgotPassword() {
     EdiRec  *user;
     cchar   *msg, *name, *to;
 
@@ -70,7 +74,7 @@ static void forgot() {
     }
 }
 
-static void login() {
+static void loginUser() {
     bool        remember = smatch(param("remember"), "true");
     HttpConn    *conn = getConn();
     if (httpLogin(conn, param("username"), param("password"))) {
@@ -81,15 +85,90 @@ static void login() {
     }       
 }
 
-static void logout() {                                                                             
-    httpLogout(getConn());
+static void logoutUser() {                                                                             
+    Http    *conn = getConn();
+    httpLogout(conn);
+    espClearCurrentSession(conn);
     sendResult(1);
 }
+
+/*
+    Verify user credentials from database password.
+    Callback from httpLogin to verify the username/password
+ */
+static bool verifyUser(HttpConn *conn, cchar *username, cchar *password)
+{
+    HttpAuth    *auth;
+    HttpUser    *user;
+    HttpRx      *rx;
+    EspRoute    *eroute;
+    EdiRec      *urec;
+
+    rx = conn->rx;
+    auth = rx->route->auth;
+    if ((urec = readRecWhere("user", "username", "==", username)) == 0) {
+        mprLog(5, "verifyUser: Unknown user \"%s\"", username);
+        return 0;
+    }
+    if (!mprCheckPassword(password, getField(urec, "password"))) {
+        mprLog(5, "Password for user \"%s\" failed to authenticate", username);
+        return 0;
+    }
+    /*
+        Restrict to a single simultaneous login
+     */
+    if (espTestConfig(rx->route, "esp.login.single", "true")) {
+        eroute = rx->route->eroute;
+        if (!espIsCurrentSession(conn)) {
+            feedback("error", "Another user still logged in");
+            mprLog(5, "verifyUser: Too many simultaneous users");
+            return 0;
+        }
+        espSetCurrentSession(conn);
+    }
+    if ((user = httpLookupUser(auth, username)) == 0) {
+        user = httpAddUser(auth, username, 0, ediGetFieldValue(urec, "roles"));
+    }
+    httpSetConnUser(conn, user);
+    mprLog(5, "User \"%s\" authenticated", username);
+    return 1;
+}
+
+#if KEEP
+/*
+    Define this code if you wish to require a login for all requests. Set esp.loginRequire to the URI for the login form.
+    Enable espDefineBase(, commonController) below
+ */
+static void commonController(HttpConn *conn)
+{
+    cchar       *loginRequired, *uri, *next, *prefix;
+
+    if (!httpLoggedIn(conn)) {
+        uri = getUri();
+        prefix = espGetConfig(conn->rx->route, "esp.prefix", 0);
+        if (sstarts(uri, prefix)) {
+            next = &uri[slen(prefix)];
+            if (smatch(next, "/user/login") || smatch(next, "/user/logout") || smatch(next, "/user/forgot")) {
+                return;
+            }
+            loginRequired = espGetConfig(conn->rx->route, "esp.loginRequired", 0);
+            if (loginRequired && *loginRequired) {
+                httpError(conn, HTTP_CODE_UNAUTHORIZED, "Access Denied. Login required");
+            }
+        }
+    }
+}
+#endif
 
 ESP_EXPORT int esp_controller_kickstart_user(HttpRoute *route, MprModule *module) 
 {
     Edi     *edi;
 
+    httpSetAuthVerify(route->auth, verifyUser);
+
+#if KEEP
+    espDefineBase(route, commonController);
+#endif
     espDefineAction(route, "user-create", createUser);
     espDefineAction(route, "user-get", getUser);
     espDefineAction(route, "user-list", listUsers);
@@ -99,9 +178,10 @@ ESP_EXPORT int esp_controller_kickstart_user(HttpRoute *route, MprModule *module
     espDefineAction(route, "user-remove", removeUser);
     espDefineAction(route, "user-update", updateUser);
 
-    espDefineAction(route, "user-cmd-forgot", forgot);
-    espDefineAction(route, "user-cmd-login", login);
-    espDefineAction(route, "user-cmd-logout", logout);
+    espDefineAction(route, "user-cmd-check", checkAuthenticated);
+    espDefineAction(route, "user-cmd-forgot", forgotPassword);
+    espDefineAction(route, "user-cmd-login", loginUser);
+    espDefineAction(route, "user-cmd-logout", logoutUser);
 
     edi = espGetRouteDatabase(route);
     ediAddValidation(edi, "present", "user", "username", 0);

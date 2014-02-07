@@ -6,7 +6,7 @@
  
 'use strict';
 
-angular.module('app').controller('UserControl', function (Esp, User, $rootScope, $route, $scope, $location, $modal, $routeParams, $timeout) {
+angular.module('app').controller('UserControl', function (Esp, User, $rootScope, $route, $scope, $location, $modal, $routeParams, $timeout, $window) {
     angular.extend($scope, $routeParams);
 
     /*
@@ -57,8 +57,8 @@ angular.module('app').controller('UserControl', function (Esp, User, $rootScope,
             } else {
                 Esp.login(response.user);
                 dialog.dismiss();
-                if (Esp.referrer) {
-                    $location.path(Esp.referrer.$$route.originalPath);
+                if (Esp.referrer && Esp.referrer.indexOf("user/login") < 0) {
+                    $window.location.href = Esp.referrer;
                     Esp.referrer = null;
                 } else {
                     $location.path("/");
@@ -71,12 +71,12 @@ angular.module('app').controller('UserControl', function (Esp, User, $rootScope,
 
     $scope.logout = function() {
         if (Esp.user) {
-            Esp.logout();
             User.logout({}, function() {
                 $rootScope.feedback = { inform: "Logged Out" };
                 $location.path("/");
                 $route.reload();
             });
+            Esp.logout();
         } else {
             $rootScope.feedback = { inform: "Logged Out" };
             $location.path("/");
@@ -110,6 +110,9 @@ angular.module('app').controller('UserControl', function (Esp, User, $rootScope,
             }
         });
     };
+    $scope.authname = function () {
+        return (Esp.user && Esp.user.name) || 'guest';
+    }
 });
 
 /*

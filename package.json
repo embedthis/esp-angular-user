@@ -10,4 +10,7 @@
         "controllers/*.c", 
         "db/**"
     ],
+    "esp": {
+        "preload": [ "user.c" ]
+    }
 }
