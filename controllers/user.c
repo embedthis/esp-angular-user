@@ -66,7 +66,7 @@ static void forgotPassword() {
     }
     to = getField(user, "email");
     msg = sfmt("Password Reset\nPlease use this new temporary password %s\nLogin at %s\n",
-        "temp", sjoin(httpUri(getConn(), "~"), "/user/login", NULL));
+        "temp", sjoin(httpLink(getConn(), "~"), "/user/login", NULL));
     if (espEmail(getConn(), to, "mob@emobrien.com", "Reset Password", 0, 0, msg, 0) < 0) {
         sendResult(feedback("error", "Cannot send password reset email."));
     } else {
