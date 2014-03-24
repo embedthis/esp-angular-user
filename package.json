@@ -1,7 +1,7 @@
 {
     "name": "esp-user",
     "description": "User authentication and authorization for ESP",
-    "version": "0.9.0",
+    "version": "5.0.0",
     "dependencies": {
         "esp-angular-mvc": "*"
     },
