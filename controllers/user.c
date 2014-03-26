@@ -159,7 +159,7 @@ static void commonController(HttpConn *conn)
 }
 #endif
 
-ESP_EXPORT int esp_controller_kickstart_user(HttpRoute *route, MprModule *module) 
+ESP_EXPORT int esp_controller_${APP}_user(HttpRoute *route, MprModule *module) 
 {
     Edi     *edi;
 
