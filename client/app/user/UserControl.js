@@ -36,7 +36,7 @@ angular.module('app').controller('UserControl', function (Esp, User, $rootScope,
         }
     } else {
         var loc = $location.path();
-        if ($location.path().indexOf('/user/login') == 0) {
+        if ($location.path().indexOf('/user/login') != 0) {
             $rootScope.feedback = { warning: "Insufficient Privilege to view users" };
         }
     }
