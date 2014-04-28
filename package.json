@@ -1,13 +1,23 @@
 {
     "name": "esp-user",
     "description": "User authentication and authorization for ESP",
-    "version": "1.0.0-rc0",
+    "version": "5.0.0-rc0",
     "keywords": [
         "esp",
     ],
     "dependencies": {
-        "esp-angular-mvc": "~1.0"
+        "esp-angular-mvc": "~5.0"
     },
+    "licenses": [
+        {
+            "type": "GPL",
+            "url": "http://www.gnu.org/licenses/gpl-2.0.html"
+        },
+        {
+            "type": "Commercial",
+            "url": "http://embedthis.com/licensing/"
+        }
+    ],
     "export": [
         "client/**", 
         "controllers/*.c", 
