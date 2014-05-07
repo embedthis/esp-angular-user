@@ -24,7 +24,7 @@ angular.module('app').controller('UserControl', function (Esp, User, $rootScope,
     }
     $scope.user = {};
 
-    if (Esp.user || !Esp.config.loginRequired) {
+    if (Esp.user || !Esp.config.login.url) {
         if ($scope.id) {
             User.get({id: $scope.id}, $scope, function(response) {
                 console.log(response);

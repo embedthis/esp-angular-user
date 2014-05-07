@@ -23,7 +23,9 @@
         "controllers/*.c", 
         "db/**"
     ],
-    "esp": {
-        "preload": [ "user.c" ]
+    "app": {
+        "esp": {
+            "preload": [ "user.c" ]
+        }
     }
 }
