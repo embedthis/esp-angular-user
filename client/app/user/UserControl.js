@@ -14,7 +14,7 @@ angular.module('app').controller('UserControl', function (Esp, User, $rootScope,
      */
     $scope.options = { roles: {}};
     if (Esp.config.login) {
-        angular.forEach(Esp.config.login.abilities, function(value, key) {
+        angular.forEach(Esp.config.login.roles, function(value, key) {
             $scope.options.roles[key] = key;
             $scope.options[key] = {
                 "true":  "Enabled",
