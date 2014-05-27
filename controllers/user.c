@@ -135,7 +135,8 @@ static bool verifyUser(HttpConn *conn, cchar *username, cchar *password)
 
 #if KEEP
 /*
-    Define this code if you wish to require a login for all requests. Set esp.loginRequire to the URI for the login form.
+    Define this code if you wish to require a login for all requests. 
+    Set esp.loginRequire to the URI for the login form.
     Enable espDefineBase(, commonController) below
  */
 static void commonController(HttpConn *conn)
