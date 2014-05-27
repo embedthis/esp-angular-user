@@ -19,9 +19,15 @@
         }
     ],
     "export": [
-        "client/**", 
-        "controllers/*.c", 
-        "db/**"
+        {
+            from: [
+                "client/**", 
+                "controllers/*.c", 
+                "db/**"
+            ],
+            to: ".",
+            overwrite: false,
+        }
     ],
     "app": {
         "esp": {
