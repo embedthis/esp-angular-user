@@ -77,6 +77,7 @@ static void forgotPassword() {
 static void loginUser() {
     bool        remember = smatch(param("remember"), "true");
     HttpConn    *conn = getConn();
+
     if (httpLogin(conn, param("username"), param("password"))) {
         render("{\"error\": 0, \"user\": {\"name\": \"%s\", \"abilities\": %s, \"remember\": %s}}", conn->username,
             mprSerialize(conn->user->abilities, MPR_JSON_QUOTES), remember ? "true" : "false");
@@ -100,16 +101,20 @@ static bool verifyUser(HttpConn *conn, cchar *username, cchar *password)
     HttpAuth    *auth;
     HttpUser    *user;
     HttpRx      *rx;
-    EspRoute    *eroute;
     EdiRec      *urec;
 
     rx = conn->rx;
     auth = rx->route->auth;
+
     if ((urec = readRecWhere("user", "username", "==", username)) == 0) {
         mprLog(5, "verifyUser: Unknown user \"%s\"", username);
         return 0;
     }
-    if (!mprCheckPassword(password, getField(urec, "password"))) {
+    if (username && *username && smatch(username, auth->username)) {
+        /* Autologin */
+        mprLog(5, "verifyUser: auto login for: \"%s\"", username);
+
+    } else if (!mprCheckPassword(password, getField(urec, "password"))) {
         mprLog(5, "Password for user \"%s\" failed to authenticate", username);
         return 0;
     }
@@ -117,7 +122,6 @@ static bool verifyUser(HttpConn *conn, cchar *username, cchar *password)
         Restrict to a single simultaneous login
      */
     if (espTestConfig(rx->route, "app.http.auth.login.single", "true")) {
-        eroute = rx->route->eroute;
         if (!espIsCurrentSession(conn)) {
             feedback("error", "Another user still logged in");
             mprLog(5, "verifyUser: Too many simultaneous users");
@@ -142,7 +146,7 @@ static bool verifyUser(HttpConn *conn, cchar *username, cchar *password)
 static void commonController(HttpConn *conn)
 {
     HttpRoute   *route;
-    cchar       *loginRequired, *uri, *stem;
+    cchar       *autoLogin, *loginRequired, *uri, *stem;
 
     if (!httpLoggedIn(conn)) {
         uri = getUri();
@@ -152,8 +156,9 @@ static void commonController(HttpConn *conn)
             if (smatch(stem, "/user/login") || smatch(stem, "/user/logout") || smatch(stem, "/user/forgot")) {
                 return;
             }
-            loginRequired = espGetConfig(conn->rx->route, "app.http.auth.require.users", 0);
-            if (loginRequired) {
+            loginRequired = espGetConfig(route, "app.http.auth.require.users", 0);
+            autoLogin = espGetConfig(route, "app.http.auth.login.name", 0);
+            if (loginRequired && !(autoLogin && *autoLogin)) {
                 httpError(conn, HTTP_CODE_UNAUTHORIZED, "Access Denied. Login required");
             }
         }
