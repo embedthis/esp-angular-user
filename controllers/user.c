@@ -107,15 +107,15 @@ static bool verifyUser(HttpConn *conn, cchar *username, cchar *password)
     auth = rx->route->auth;
 
     if ((urec = readRecWhere("user", "username", "==", username)) == 0) {
-        mprLog(5, "verifyUser: Unknown user \"%s\"", username);
+        httpTrace(conn, "auth.login.error", "error", "msg=\"Cannot verify user\"", username=%s", username);
         return 0;
     }
     if (username && *username && smatch(username, auth->username)) {
         /* Autologin */
-        mprLog(5, "verifyUser: auto login for: \"%s\"", username);
+        httpTrace(conn, "auth.login.authenticated", "context", "msg=\"Auto login\"", username=%s", username);
 
     } else if (!mprCheckPassword(password, getField(urec, "password"))) {
-        mprLog(5, "Password for user \"%s\" failed to authenticate", username);
+        httpTrace(conn, "auth.login.error", "error", "msg=\"Password failed to authenticate\", username=%s", username);
         return 0;
     }
     /*
@@ -124,7 +124,7 @@ static bool verifyUser(HttpConn *conn, cchar *username, cchar *password)
     if (espTestConfig(rx->route, "app.http.auth.login.single", "true")) {
         if (!espIsCurrentSession(conn)) {
             feedback("error", "Another user still logged in");
-            mprLog(5, "verifyUser: Too many simultaneous users");
+            httpTrace(conn, "auth.login.error", "error", "msg=\"Too many simultaneous users\"");
             return 0;
         }
         espSetCurrentSession(conn);
@@ -133,7 +133,7 @@ static bool verifyUser(HttpConn *conn, cchar *username, cchar *password)
         user = httpAddUser(auth, username, 0, ediGetFieldValue(urec, "roles"));
     }
     httpSetConnUser(conn, user);
-    mprLog(5, "User \"%s\" authenticated", username);
+    httpTrace(conn, "auth.login.authenticated", "context", "msg=\"User authenticated\", username=%s", username);
     return 1;
 }
 
