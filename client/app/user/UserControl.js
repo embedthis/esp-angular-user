@@ -9,28 +9,21 @@
 angular.module('app').controller('UserControl', function (Esp, User, $rootScope, $route, $scope, $location, $modal, $routeParams, $timeout, $window) {
     angular.extend($scope, $routeParams);
 
-    /*
-        Setup form select dropdowns
-     */
-    $scope.options = { roles: {}};
-    if (Esp.config.login) {
-        angular.forEach(Esp.config.login.roles, function(value, key) {
-            $scope.options.roles[key] = key;
-            $scope.options[key] = {
-                "true":  "Enabled",
-                "false": "Disabled",
-            };
-        })
-    }
     $scope.user = {};
+    $scope.roles = { administrator: false, user: false };
 
-    if (Esp.user || !Esp.config.login.url) {
+    if (Esp.user || !Esp.config.auth.login.url) {
         if ($scope.id) {
             User.get({id: $scope.id}, $scope, function(response) {
-                console.log(response);
+                var roles = response.user.roles.split(",");
+                angular.forEach(roles, function(value, key) {
+                    value = value.trim();
+                    $scope.roles[value] = true;
+                });
             });
         } else if ($location.path().indexOf('/user/list') == 0) {
             User.list(null, $scope, {users: "data"});
+
         } else if ($location.path() == "/user/") {
             User.init(null, $scope);
         }
@@ -42,6 +35,13 @@ angular.module('app').controller('UserControl', function (Esp, User, $rootScope,
     }
 
     $scope.save = function() {
+        var roles = "";
+        angular.forEach($scope.roles, function(value, key) {
+            if (value != false) {
+                roles += key + ", ";
+            }
+        });
+        $scope.user.roles = roles.replace(/[, ]*$/, '');
         User.update($scope.user, $scope, function(response) {
             if (!response.error) {
                 $location.path('/user/list');

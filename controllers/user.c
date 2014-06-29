@@ -15,8 +15,14 @@ static void createUser() {
 }
 
 static void getUser() { 
-    /* Don't send the real password back to the user */
-    sendRec(setField(readRec("user", param("id")), "password", "   n o t p a s s w o r d   "));
+    EdiRec      *rec;
+    if ((rec = readRec("user", param("id"))) != 0) {
+        /* Don't send the real password back to the user */
+        setField(rec, "password", "        ");
+        sendRec(rec);
+    } else {
+        sendResult(0);
+    }
 }
 
 static void indexUser() {
@@ -44,10 +50,22 @@ static void removeUser() {
     }
 }
 
-static void updateUser() { 
+static void updateUser() {
+    EdiRec  *rec;
+    cchar   *password;
     if (canUser("edit", 1)) {
-        setParam("password", mprMakePassword(param("password"), 0, 0));
-        sendResult(updateRecFromParams("user"));
+        password = strim(param("password"), " ", 0);
+        if (smatch(password, "") && (rec = readRec("user", param("id"))) != 0) {
+            password = getField(rec, "password");
+            setParam("password", password);
+        } else {
+            setParam("password", mprMakePassword(password, 0, 0));
+        }
+        if (!updateRecFromParams("user") || ediSave(getDatabase()) < 0) {
+            sendResult(0);
+        } else {
+            sendResult(1);
+        }
     }
 }
 
@@ -116,6 +134,7 @@ static bool verifyUser(HttpConn *conn, cchar *username, cchar *password)
 
     } else if (!mprCheckPassword(password, getField(urec, "password"))) {
         httpTrace(conn, "auth.login.error", "error", "msg=\"Password failed to authenticate\", username=%s", username);
+        mprSleep(500);
         return 0;
     }
     /*

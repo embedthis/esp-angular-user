@@ -20,12 +20,12 @@ static int forward(Edi *db) {
      */
     password = mprMakePassword("demo", 16, 128);
     rec = ediCreateRec(db, "user");
-    ediSetFields(rec, ediMakeJson("{ username: 'admin', password: '%s', email: 'dev@embedthis.com', roles: 'edit, view' }", password));
+    ediSetFields(rec, ediMakeJson("{ username: 'admin', password: '%s', email: 'dev@embedthis.com', roles: 'administrator' }", password));
     ediUpdateRec(db, rec);
 
     password = mprMakePassword("demo", 16, 16);
     rec = ediCreateRec(db, "user");
-    ediSetFields(rec, ediMakeJson("{ username: 'guest', password: '%s', email: 'guest@example.com', roles: 'view' }", password));
+    ediSetFields(rec, ediMakeJson("{ username: 'guest', password: '%s', email: 'guest@example.com', roles: 'user' }", password));
     ediUpdateRec(db, rec);
     return 0;
 }
