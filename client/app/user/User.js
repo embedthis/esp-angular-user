@@ -1,7 +1,6 @@
 /*
     user.js - User model
  */
-'use strict';
 
 /*
     Setup User routes to login/logout and ask for a password reminder

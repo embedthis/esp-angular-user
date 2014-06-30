@@ -4,8 +4,6 @@
     This controller manages user login/logout and admin editing of user configuration.
  */
  
-'use strict';
-
 angular.module('app').controller('UserControl', function (Esp, User, $rootScope, $route, $scope, $location, $modal, $routeParams, $timeout, $window) {
     angular.extend($scope, $routeParams);
 
