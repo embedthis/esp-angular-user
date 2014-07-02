@@ -1,7 +1,7 @@
 {
     "name": "esp-user",
     "description": "User authentication and authorization for ESP",
-    "version": "5.0.0-rc2",
+    "version": "5.0.0",
     "keywords": [
         "esp",
     ],
