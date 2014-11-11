@@ -6,7 +6,7 @@
         "esp",
     ],
     "dependencies": {
-        "esp-angular-mvc": "~5"
+        "esp-angular-mvc": "~5.2"
     },
     "licenses": [
         {
