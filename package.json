@@ -1,12 +1,12 @@
 {
     "name": "esp-user",
     "description": "User authentication and authorization for ESP",
-    "version": "5.2.1",
+    "version": "5.3.0",
     "keywords": [
         "esp",
     ],
     "dependencies": {
-        "esp-angular-mvc": "~5.2"
+        "esp-angular-mvc": "~5.3"
     },
     "licenses": [
         {
