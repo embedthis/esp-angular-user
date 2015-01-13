@@ -7,7 +7,7 @@
         "esp"
     ],
     "dependencies": {
-        "esp-angular-mvc": "~5.3"
+        "esp-angular-skeleton": "~5.3"
     },
     "licenses": [
         {
@@ -19,17 +19,15 @@
             "url": "https://embedthis.com/licensing/"
         }
     ],
-    "export": [
-        {
-            "from": [
-                "documents/**", 
-                "controllers/*.c", 
-                "db/**"
-            ],
-            "to": "${TOP}",
-            "overwrite": false
-        }
-    ],
+    "export": {
+        "from": [
+            "controllers/*.c", 
+            "db/**",
+            "source/**"
+        ],
+        "to": "${TOP}",
+        "overwrite": false
+    },
     "blend": [
         "esp.json"
     ]
