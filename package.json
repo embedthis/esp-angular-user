@@ -25,9 +25,9 @@
     "pak": {
         "export": {
             "from": [
+                "contents/**",
                 "controllers/*.c", 
-                "db/**",
-                "source/**"
+                "db/**"
             ],
             "to": "${TOP}",
             "overwrite": false
