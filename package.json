@@ -2,7 +2,6 @@
     "name": "esp-user",
     "description": "User authentication and authorization for ESP",
     "version": "5.4.0",
-    "pak": ">=0.10",
     "keywords": [
         "esp"
     ],
@@ -19,16 +18,21 @@
             "url": "https://embedthis.com/licensing/"
         }
     ],
-    "export": {
-        "from": [
-            "controllers/*.c", 
-            "db/**",
-            "source/**"
-        ],
-        "to": "${TOP}",
-        "overwrite": false
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/embedthis/esp-user.git"
     },
-    "blend": [
-        "esp.json"
-    ]
+    "pak": {
+        "export": {
+            "from": [
+                "controllers/*.c", 
+                "db/**",
+                "source/**"
+            ],
+            "to": "${TOP}",
+            "overwrite": false
+        },
+        "manage": "esp.json",
+        "version": ">=0.10.0"
+    }
 }
