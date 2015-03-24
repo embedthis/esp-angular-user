@@ -6,7 +6,7 @@
         "esp"
     ],
     "dependencies": {
-        "esp-angular-skeleton": "~5.3"
+        "esp-angular-skeleton": "^5.4"
     },
     "licenses": [
         {
