@@ -1,12 +1,12 @@
 {
     "name": "esp-user",
     "description": "User authentication and authorization for ESP",
-    "version": "5.4.0",
+    "version": "5.4.1",
     "keywords": [
         "esp"
     ],
     "dependencies": {
-        "esp-angular-skeleton": "^5.4"
+        "esp-angular-skeleton": "~5.4"
     },
     "licenses": [
         {
@@ -26,7 +26,7 @@
         "export": {
             "from": [
                 "contents/**",
-                "controllers/*.c", 
+                "controllers/*.c",
                 "db/**"
             ],
             "to": "${TOP}",
