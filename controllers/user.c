@@ -125,12 +125,12 @@ static bool verifyUser(HttpConn *conn, cchar *username, cchar *password)
     auth = rx->route->auth;
 
     if ((urec = readRecWhere("user", "username", "==", username)) == 0) {
-        httpTrace(conn, "auth.login.error", "error", "msg=\"Cannot verify user\"", username=%s", username);
+        httpTrace(conn, "auth.login.error", "error", "msg=\"Cannot verify user\", username=%s", username);
         return 0;
     }
     if (username && *username && smatch(username, auth->username)) {
         /* Autologin */
-        httpTrace(conn, "auth.login.authenticated", "context", "msg=\"Auto login\"", username=%s", username);
+        httpTrace(conn, "auth.login.authenticated", "context", "msg=\"Auto login\", username=%s", username);
 
     } else if (!mprCheckPassword(password, getField(urec, "password"))) {
         httpTrace(conn, "auth.login.error", "error", "msg=\"Password failed to authenticate\", username=%s", username);
