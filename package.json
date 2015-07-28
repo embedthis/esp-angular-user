@@ -1,5 +1,5 @@
 {
-    "name": "esp-user",
+    "name": "esp-angular-user",
     "description": "User authentication and authorization for ESP",
     "version": "5.4.1",
     "keywords": [
@@ -20,7 +20,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git://github.com/embedthis/esp-user.git"
+        "url": "git://github.com/embedthis/esp-angular-user.git"
     },
     "pak": {
         "export": {

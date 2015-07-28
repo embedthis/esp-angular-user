@@ -1,4 +1,4 @@
-esp-user
+esp-angular-user
 ===
 
 This software is distributed under the GPL open source license.
