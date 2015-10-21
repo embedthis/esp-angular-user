@@ -13,21 +13,21 @@
             <form class="form-horizontal">
                 <div class="modal-body">
                     <div class="form-group">
-                        <input type='text' class="form-control" ng-model='user.username' autofocus tabindex='1'
+                        <input type='text' class="form-control" ng-model='user.username' autofocus
                         placeholder="account">
                     </div>
                     <div class="form-group">
-                        <input id='password' type='password' class="form-control" ng-model='user.password' 
-                            tabindex='2'>
+                        <input id='password' type='password' class="form-control" ng-model='user.password'>
                         <a class="forgot-password" ng-click="forgot()">Forgot password?</a>
                         <!--
-                        <input type='checkbox' ng-model="user.remember" value="true" tabindex='3'> <span class="remember-me">Remember me</span>
+                        <input type='checkbox' ng-model="user.remember" value="true"> 
+                        <span class="remember-me">Remember me</span>
                         -->
                     </div>
                 </div>
                 <div class="text-right">
-                    <button class="btn btn-primary" ng-click='login($dialog)' tabindex='4'>OK</button>
-                    <button class="btn" ng-click='$dismiss()' tabindex='4'>Cancel</button>
+                    <button class="btn btn-primary" ng-click='login($dialog)'>OK</button>
+                    <button class="btn" ng-click='cancel($dialog)'>Cancel</button>
                 </div>
             </form>
         </div>

@@ -51,6 +51,7 @@ angular.module('app').controller('UserControl', function (Esp, User, $rootScope,
         User.login($scope.user, function(response, fn) {
             if (response.error) {
                 Esp.logout();
+                dialog.dismiss();
                 $location.path("/");
             } else {
                 Esp.login(response.user);
@@ -108,6 +109,12 @@ angular.module('app').controller('UserControl', function (Esp, User, $rootScope,
             }
         });
     };
+
+    $scope.cancel = function(dialog) {
+        dialog.dismiss();
+        $location.path("/");
+    };
+
     $scope.authname = function () {
         return (Esp.user && Esp.user.name) || 'guest';
     }
